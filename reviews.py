@@ -1,20 +1,19 @@
 import zipfile
 import pandas as pd
 
-df = pd.read_csv(r'data\winemag-data-130k-v2.csv.zip', compression='zip')
+df = pd.read_csv(r'wine-reviews-exercise-Dtussey1\data\winemag-data-130k-v2.csv.zip', compression='zip')
 
 df['count'] = df.groupby('country')['country'].transform('count')
 
-df2 = df.drop(columns=['Unnamed: 0', 'description', 'price', 'province', 'region_1', 'region_2', 'taster_name', 'taster_twitter_handle', 'title', 'variety', 'winery'])
+average_points = df.groupby('country')['points'].mean().round(1)
 
-df3 = df2.drop_duplicates('country')
+df = df.drop(columns=['Unnamed: 0', 'designation', 'points', 'description', 'price', 'province', 'region_1', 'region_2', 'taster_name', 'taster_twitter_handle', 'title', 'variety', 'winery'])
 
-average_points = df3['points'].mean()
+df = df.drop_duplicates('country')
 
-df3['points'] = round(average_points, 1)
 
-df3 = df3[['country', 'count', 'points']]
+df = df.merge(average_points.rename('points'), on= 'country')
 
-print(df3.to_string(index=False))
+print(df.to_string(index=False))
 
-df3.to_csv(r'data\reviews-per-country.csv')
+df.to_csv(r'wine-reviews-exercise-Dtussey1\data\reviews-per-country.csv')
